@@ -5,10 +5,10 @@ import 'gesture_unlock_view.dart';
 
 class GestureUnlockIndicator extends StatefulWidget {
   ///控件大小
-  final double size;
+  final double? size;
 
   ///圆之间的间距
-  final double roundSpace;
+  final double? roundSpace;
 
   ///圆之间的间距比例(以圆直径作为基准)，[roundSpace]设置时无效
   final double roundSpaceRatio;
@@ -43,8 +43,9 @@ class GestureUnlockIndicator extends StatefulWidget {
 }
 
 class _GestureUnlockIndicatorState extends State<GestureUnlockIndicator> {
-  List<UnlockPoint> _rounds = List<UnlockPoint>(9);
-  double _radius;
+  List<UnlockPoint> _rounds =
+      List.generate(9, (index) => UnlockPoint(x: 0, y: 0, position: 0));
+  double? _radius;
 
   @override
   void initState() {
@@ -55,7 +56,7 @@ class _GestureUnlockIndicatorState extends State<GestureUnlockIndicator> {
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
-        size: Size(widget.size, widget.size),
+        size: Size(widget.size!, widget.size!),
         painter: LockPatternIndicatorPainter(
           _rounds,
           _radius,
@@ -67,7 +68,7 @@ class _GestureUnlockIndicatorState extends State<GestureUnlockIndicator> {
 
   void setSelectPoint(List<int> selected) {
     for (int i = 0; i < _rounds.length; i++) {
-      _rounds[i].status =
+      _rounds[i]!.status =
           selected.contains(i) ? UnlockStatus.success : UnlockStatus.normal;
     }
   }
@@ -76,17 +77,17 @@ class _GestureUnlockIndicatorState extends State<GestureUnlockIndicator> {
     var width = widget.size;
     var roundSpace = widget.roundSpace;
     if (roundSpace != null) {
-      _radius = (width - roundSpace * 2) / 3 / 2;
+      _radius = (width! - roundSpace * 2) / 3 / 2;
     } else {
-      _radius = width / (3 + widget.roundSpaceRatio * 2) / 2;
-      roundSpace = _radius * 2 * widget.roundSpaceRatio;
+      _radius = width! / (3 + widget.roundSpaceRatio * 2) / 2;
+      roundSpace = _radius! * 2 * widget.roundSpaceRatio;
     }
 
     for (int i = 0; i < _rounds.length; i++) {
       var row = i ~/ 3;
       var column = i % 3;
-      var dx = column * (_radius * 2 + roundSpace) + _radius;
-      var dy = row * (_radius * 2 + roundSpace) + _radius;
+      var dx = column * (_radius! * 2 + roundSpace) + _radius!;
+      var dy = row * (_radius! * 2 + roundSpace) + _radius!;
       _rounds[i] = UnlockPoint(x: dx, y: dy, position: i);
     }
     setState(() {});
@@ -94,8 +95,8 @@ class _GestureUnlockIndicatorState extends State<GestureUnlockIndicator> {
 }
 
 class LockPatternIndicatorPainter extends CustomPainter {
-  List<UnlockPoint> _rounds;
-  double _radius;
+  List<UnlockPoint?> _rounds;
+  double? _radius;
   double _strokeWidth;
   Color _defaultColor;
   Color _selectedColor;
@@ -111,16 +112,16 @@ class LockPatternIndicatorPainter extends CustomPainter {
     paint.strokeWidth = _strokeWidth;
 
     for (var round in _rounds) {
-      switch (round.status) {
+      switch (round!.status) {
         case UnlockStatus.normal:
           paint.style = PaintingStyle.fill;
           paint.color = _defaultColor;
-          canvas.drawCircle(round.toOffset(), _radius, paint);
+          canvas.drawCircle(round.toOffset(), _radius!, paint);
           break;
         case UnlockStatus.success:
           paint.style = PaintingStyle.fill;
           paint.color = _selectedColor;
-          canvas.drawCircle(round.toOffset(), _radius, paint);
+          canvas.drawCircle(round.toOffset(), _radius!, paint);
           break;
         default:
           break;

@@ -21,7 +21,7 @@ class GestureUnlockView extends StatefulWidget {
   final double padding;
 
   ///圆之间的间距
-  final double roundSpace;
+  final double? roundSpace;
 
   ///圆之间的间距比例(以圆半径作为基准)，[roundSpace]设置时无效
   final double roundSpaceRatio;
@@ -51,10 +51,10 @@ class GestureUnlockView extends StatefulWidget {
   final int delayTime;
 
   ///回调
-  final Function(List<int>, UnlockStatus) onCompleted;
+  final Function(List<int>, UnlockStatus)? onCompleted;
 
   GestureUnlockView({
-    @required this.size,
+    required this.size,
     this.type = UnlockType.solid,
     this.padding = 10,
     this.roundSpace,
@@ -92,14 +92,14 @@ class GestureUnlockView extends StatefulWidget {
 class GestureState extends State<GestureUnlockView> {
   UnlockStatus _status = UnlockStatus.normal;
 
-  final List<UnlockPoint> points = List<UnlockPoint>(9);
+  final List<UnlockPoint?> points = List.generate(9, (index) => UnlockPoint(x: 0, y: 0, position: 0));
 
-  final List<UnlockPoint> pathPoints = [];
-  UnlockPoint curPoint;
-  double _radius;
-  double _solidRadius;
-  double _touchRadius;
-  Timer _timer;
+  final List<UnlockPoint?> pathPoints = [];
+  UnlockPoint? curPoint;
+  double? _radius;
+  double? _solidRadius;
+  late double _touchRadius;
+  Timer? _timer;
 
   @override
   void initState() {
@@ -111,7 +111,7 @@ class GestureState extends State<GestureUnlockView> {
   void deactivate() {
     super.deactivate();
     if (_timer?.isActive == true) {
-      _timer.cancel();
+      _timer!.cancel();
     }
   }
 
@@ -123,17 +123,17 @@ class GestureState extends State<GestureUnlockView> {
     } else {
       _radius =
           (width - widget.padding * 2) / (3 + widget.roundSpaceRatio * 2) / 2;
-      roundSpace = _radius * 2 * widget.roundSpaceRatio;
+      roundSpace = _radius! * 2 * widget.roundSpaceRatio;
     }
 
-    _solidRadius = _radius * widget.solidRadiusRatio;
-    _touchRadius = _radius * widget.touchRadiusRatio;
+    _solidRadius = _radius! * widget.solidRadiusRatio;
+    _touchRadius = _radius! * widget.touchRadiusRatio;
 
     for (int i = 0; i < points.length; i++) {
       var row = i ~/ 3;
       var column = i % 3;
-      var dx = widget.padding + column * (_radius * 2 + roundSpace) + _radius;
-      var dy = widget.padding + row * (_radius * 2 + roundSpace) + _radius;
+      var dx = widget.padding + column * (_radius! * 2 + roundSpace) + _radius!;
+      var dy = widget.padding + row * (_radius! * 2 + roundSpace) + _radius!;
       points[i] = UnlockPoint(x: dx, y: dy, position: i);
     }
   }
@@ -190,8 +190,8 @@ class GestureState extends State<GestureUnlockView> {
         _clearAllData();
         break;
       case UnlockStatus.failed:
-        for (UnlockPoint round in points) {
-          if (round.status == UnlockStatus.success) {
+        for (UnlockPoint? round in points) {
+          if (round!.status == UnlockStatus.success) {
             round.status = UnlockStatus.failed;
           }
         }
@@ -209,8 +209,8 @@ class GestureState extends State<GestureUnlockView> {
   }
 
   void _updateRoundStatus(UnlockStatus status) {
-    for (UnlockPoint round in points) {
-      round.status = status;
+    for (UnlockPoint? round in points) {
+      round!.status = status;
     }
   }
 
@@ -220,7 +220,7 @@ class GestureState extends State<GestureUnlockView> {
   }
 
   void _onPanUpdate(DragUpdateDetails e, BuildContext context) {
-    RenderBox box = context.findRenderObject();
+    RenderBox box = context.findRenderObject() as RenderBox;
     Offset offset = box.globalToLocal(e.globalPosition);
     _slideDealt(offset);
     setState(() {
@@ -234,8 +234,8 @@ class GestureState extends State<GestureUnlockView> {
         curPoint = pathPoints[pathPoints.length - 1];
       });
       if (widget.onCompleted != null) {
-        List<int> items = pathPoints.map((item) => item.position).toList();
-        widget.onCompleted(items, _status);
+        List<int> items = pathPoints.map((item) => item!.position).toList();
+        widget.onCompleted!(items, _status);
       }
 //      if (this.immediatelyClear) this._clearAllData(); //clear data
     }
@@ -248,21 +248,21 @@ class GestureState extends State<GestureUnlockView> {
     int yPosition = -1;
     for (int i = 0; i < 3; i++) {
       if (xPosition == -1 &&
-          points[i].x + _radius + _touchRadius >= offSet.dx &&
-          offSet.dx >= points[i].x - _radius - _touchRadius) {
+          points[i]!.x + _radius! + _touchRadius >= offSet.dx &&
+          offSet.dx >= points[i]!.x - _radius! - _touchRadius) {
         xPosition = i;
       }
       if (yPosition == -1 &&
-          points[i * 3].y + _radius + _touchRadius >= offSet.dy &&
-          offSet.dy >= points[i * 3].y - _radius - _touchRadius) {
+          points[i * 3]!.y + _radius! + _touchRadius >= offSet.dy &&
+          offSet.dy >= points[i * 3]!.y - _radius! - _touchRadius) {
         yPosition = i;
       }
     }
     if (xPosition == -1 || yPosition == -1) return;
     int position = yPosition * 3 + xPosition;
 
-    if (points[position].status != UnlockStatus.success) {
-      points[position].status = UnlockStatus.success;
+    if (points[position]!.status != UnlockStatus.success) {
+      points[position]!.status = UnlockStatus.success;
       pathPoints.add(points[position]);
     }
 
@@ -279,7 +279,7 @@ class GestureState extends State<GestureUnlockView> {
 
   _clearAllData() {
     for (int i = 0; i < 9; i++) {
-      points[i].status = UnlockStatus.normal;
+      points[i]!.status = UnlockStatus.normal;
     }
     pathPoints.clear();
     setState(() {});

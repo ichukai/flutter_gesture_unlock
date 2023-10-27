@@ -10,7 +10,7 @@ class UnlockPoint {
   UnlockStatus status = UnlockStatus.normal;
   int position;
 
-  UnlockPoint({@required this.x, @required this.y, @required this.position});
+  UnlockPoint({required this.x, required this.y, required this.position});
 
   Offset toOffset() {
     return Offset(x, y);

@@ -4,15 +4,15 @@ import 'gesture_unlock_view.dart';
 import 'unlock_point.dart';
 
 class UnlockPointPainter extends CustomPainter {
-  final UnlockType type;
-  final List<UnlockPoint> points;
-  final double radius;
-  final double solidRadius;
-  final double lineWidth;
-  final Color defaultColor;
-  final Color selectedColor;
-  final Color failedColor;
-  final Color disableColor;
+  final UnlockType? type;
+  final List<UnlockPoint?>? points;
+  final double? radius;
+  final double? solidRadius;
+  final double? lineWidth;
+  final Color? defaultColor;
+  final Color? selectedColor;
+  final Color? failedColor;
+  final Color? disableColor;
 
   UnlockPointPainter(
       {this.type,
@@ -39,38 +39,38 @@ class UnlockPointPainter extends CustomPainter {
   }
 
   void _paintPointWithHollow(Canvas canvas, Paint paint) {
-    paint.strokeWidth = lineWidth;
-    for (UnlockPoint point in points) {
-      switch (point.status) {
+    paint.strokeWidth = lineWidth!;
+    for (UnlockPoint? point in points!) {
+      switch (point!.status) {
         case UnlockStatus.normal:
           {
-            paint.color = defaultColor;
+            paint.color = defaultColor!;
             paint.style = PaintingStyle.stroke;
-            canvas.drawCircle(point.toOffset(), radius, paint);
+            canvas.drawCircle(point.toOffset(), radius!, paint);
             break;
           }
         case UnlockStatus.success:
           {
             paint.style = PaintingStyle.fill;
-            paint.color = selectedColor;
-            canvas.drawCircle(point.toOffset(), solidRadius, paint);
+            paint.color = selectedColor!;
+            canvas.drawCircle(point.toOffset(), solidRadius!, paint);
             paint.style = PaintingStyle.stroke;
-            canvas.drawCircle(point.toOffset(), radius, paint);
+            canvas.drawCircle(point.toOffset(), radius!, paint);
             break;
           }
         case UnlockStatus.failed:
           {
             paint.style = PaintingStyle.fill;
-            paint.color = failedColor;
-            canvas.drawCircle(point.toOffset(), solidRadius, paint);
+            paint.color = failedColor!;
+            canvas.drawCircle(point.toOffset(), solidRadius!, paint);
             paint.style = PaintingStyle.stroke;
-            canvas.drawCircle(point.toOffset(), radius, paint);
+            canvas.drawCircle(point.toOffset(), radius!, paint);
             break;
           }
         case UnlockStatus.disable:
           {
-            paint.color = disableColor;
-            canvas.drawCircle(point.toOffset(), solidRadius, paint);
+            paint.color = disableColor!;
+            canvas.drawCircle(point.toOffset(), solidRadius!, paint);
             break;
           }
       }
@@ -78,35 +78,35 @@ class UnlockPointPainter extends CustomPainter {
   }
 
   void _paintPoint(Canvas canvas, Paint paint) {
-    for (UnlockPoint point in points) {
-      switch (point.status) {
+    for (UnlockPoint? point in points!) {
+      switch (point!.status) {
         case UnlockStatus.normal:
           {
-            paint.color = defaultColor;
+            paint.color = defaultColor!;
             paint.style = PaintingStyle.fill;
-            canvas.drawCircle(point.toOffset(), solidRadius, paint);
+            canvas.drawCircle(point.toOffset(), solidRadius!, paint);
             break;
           }
         case UnlockStatus.success:
           {
-            paint.color = selectedColor;
-            canvas.drawCircle(point.toOffset(), solidRadius, paint);
-            paint.color = selectedColor.withAlpha(14);
-            canvas.drawCircle(point.toOffset(), radius, paint);
+            paint.color = selectedColor!;
+            canvas.drawCircle(point.toOffset(), solidRadius!, paint);
+            paint.color = selectedColor!.withAlpha(14);
+            canvas.drawCircle(point.toOffset(), radius!, paint);
             break;
           }
         case UnlockStatus.failed:
           {
-            paint.color = failedColor;
-            canvas.drawCircle(point.toOffset(), solidRadius, paint);
-            paint.color = failedColor.withAlpha(14);
-            canvas.drawCircle(point.toOffset(), radius, paint);
+            paint.color = failedColor!;
+            canvas.drawCircle(point.toOffset(), solidRadius!, paint);
+            paint.color = failedColor!.withAlpha(14);
+            canvas.drawCircle(point.toOffset(), radius!, paint);
             break;
           }
         case UnlockStatus.disable:
           {
-            paint.color = disableColor;
-            canvas.drawCircle(point.toOffset(), solidRadius, paint);
+            paint.color = disableColor!;
+            canvas.drawCircle(point.toOffset(), solidRadius!, paint);
             break;
           }
       }

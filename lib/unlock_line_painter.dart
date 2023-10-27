@@ -4,20 +4,20 @@ import 'package:flutter_gesture_unlock/unlock_point.dart';
 import 'gesture_unlock_view.dart';
 
 class UnlockLinePainter extends CustomPainter {
-  final List<UnlockPoint> pathPoints;
+  final List<UnlockPoint?> pathPoints;
   final Color selectColor;
   final Color failedColor;
   final UnlockStatus status;
   final double lineWidth;
-  final UnlockPoint curPoint;
+  final UnlockPoint? curPoint;
 
   UnlockLinePainter(
-      {@required this.pathPoints,
-      @required this.status,
-      @required this.selectColor,
-      @required this.failedColor,
-      @required this.lineWidth,
-      @required this.curPoint});
+      {required this.pathPoints,
+      required this.status,
+      required this.selectColor,
+      required this.failedColor,
+      required this.lineWidth,
+      required this.curPoint});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -33,12 +33,12 @@ class UnlockLinePainter extends CustomPainter {
       ..strokeWidth = this.lineWidth;
 
     for (int i = 0; i < length - 1; i++) {
-      canvas.drawLine(Offset(pathPoints[i].x, pathPoints[i].y),
-          Offset(pathPoints[i + 1].x, pathPoints[i + 1].y), linePaint);
+      canvas.drawLine(Offset(pathPoints[i]!.x, pathPoints[i]!.y),
+          Offset(pathPoints[i + 1]!.x, pathPoints[i + 1]!.y), linePaint);
     }
 
-    double endX = curPoint.x;
-    double endY = curPoint.y;
+    double endX = curPoint!.x;
+    double endY = curPoint!.y;
     if (endX < 0) {
       endX = 0;
     } else if (endX > size.width) {
@@ -50,7 +50,7 @@ class UnlockLinePainter extends CustomPainter {
       endY = size.height;
     }
 
-    canvas.drawLine(Offset(pathPoints[length - 1].x, pathPoints[length - 1].y),
+    canvas.drawLine(Offset(pathPoints[length - 1]!.x, pathPoints[length - 1]!.y),
         Offset(endX, endY), linePaint);
   }
 
